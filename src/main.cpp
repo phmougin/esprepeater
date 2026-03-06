@@ -1,25 +1,26 @@
-// Simplex radio parrot 
+// Simplex (parrot) radio repeater
 // Philippe MOUGIN
 // V1.0 2026/02/27
+// Dependency: AudioTools library by Phil Schatzmann  https://github.com/pschatzmann/arduino-audio-tools
 
 #include <Arduino.h>
 
-// audio tools
+// audio tools library import https://github.com/pschatzmann/arduino-audio-tools
 #include "AudioTools.h"
 #include "AudioTools/AudioLibs/AudioBoardStream.h"
 #include "AudioTools/AudioLibs/MemoryManager.h"
 #include "AudioTools/CoreAudio/BaseStream.h"
+//#include "Morse.h"
 
 
 
-
-const uint32_t SAMPLE_RATE = 8000;      // sampling rate //8000
+const uint32_t SAMPLE_RATE = 8000;      // sampling rate 
 const uint8_t CHANNELS    = 1;           // mic is mono
-const uint16_t THRESHOLD  = 90;        // simple RMS threshold to start recording : 1000 default
+const uint16_t THRESHOLD  = 80;        // threshold to start recording const int BITS_PER_SAMPLE = 8;
 const uint32_t RECORD_MS  = 5000;        // record ~5 sec
 const size_t BUFFER_SIZE  = (SAMPLE_RATE * CHANNELS * sizeof(int16_t) * RECORD_MS) / 1000;
 
-AudioBoardStream kit(AudioKitAC101);     // kit driver for AudioKit with AC101 codec
+AudioBoardStream kit(AudioKitAC101);     // kit driver for AudioKit with AC101 codec : change to appropriate board if you use another one (see
 
 DynamicMemoryStream recording(true);      // buffer to record into RAM
 StreamCopy recorder;                      // copies from mic → memory or memory → codec
@@ -110,7 +111,7 @@ void playBeep() {
 
 void loop() {
   //playBeep();
-  //sleep(2);
+  sleep(1);
  
 
   // 1) WAIT until we see loud sound
@@ -137,6 +138,7 @@ void loop() {
     //}
   }
  
+
 
   // 2) RECORD into recording buffer
   recording.begin();             // clear
