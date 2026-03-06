@@ -22,16 +22,22 @@ const size_t BUFFER_SIZE  = (SAMPLE_RATE * CHANNELS * sizeof(int16_t) * RECORD_M
 
 AudioBoardStream kit(AudioKitAC101);     // kit driver for AudioKit with AC101 codec : change to appropriate board if you use another one (see
 
+
 DynamicMemoryStream recording(true);      // buffer to record into RAM
 StreamCopy recorder;                      // copies from mic → memory or memory → codec
 
 
+MultiOutput multiout;
+VolumeMeter  volumemeter;                    // to measure the volume of the recorded signal
+StreamCopy multirecorder(multiout,kit);
+ 
+
 /////////////////////// beep
 const int DURATION_BEEP = 1;
-const float TONE_FREQ = 440.0;
+const float TONE_FREQ = 659.0; // E5
 const int TOTAL_SAMPLES_BEEP = SAMPLE_RATE * DURATION_BEEP;
 // PCM buffer in memory
-int16_t pcm_buffer[TOTAL_SAMPLES_BEEP];
+int16_t pcm_buffer[TOTAL_SAMPLES_BEEP]; // samples are 16-bit signed integers
 // Stream objects
 MemoryStream memStream;
 // Output stream to AudioKit
@@ -57,7 +63,7 @@ static bool soundAboveThreshold(int16_t *buf, size_t len) {
 
 
 
-void generateBeep()
+void prepareBeep()
 {
     for (int i = 0; i < TOTAL_SAMPLES_BEEP; i++) {
         float t = (float)i / SAMPLE_RATE;
@@ -65,6 +71,25 @@ void generateBeep()
 
         pcm_buffer[i] = (int16_t)(s * 30000);
     }
+}
+
+
+void playBeep() {
+ 
+  Serial.println("Beep...");
+ 
+  
+  MemoryStream memStream((uint8_t*)pcm_buffer, TOTAL_SAMPLES_BEEP);
+  StreamCopy player(kit, memStream);
+  bool playing=true;
+  
+  
+  while(memStream.available()){
+    player.copy();
+
+  }
+  Serial.println("Playbeep finished");
+    
 }
 
 void setup() {
@@ -79,34 +104,24 @@ void setup() {
   cfg.channels    = CHANNELS;
   cfg.bits_per_sample = 16;
   cfg.sd_active = false;
-  cfg.input_device = ADC_INPUT_LINE2; //LINE1: mic  LINE2: input jack
+  cfg.input_device = ADC_INPUT_LINE1; //LINE1: mic  LINE2: input jack
   
 
-
-  generateBeep();
-
- 
   kit.begin(cfg);
   kit.setVolume(1.0);
-  
 
+  prepareBeep(); // fill the PCM buffer with the beep sound
+  playBeep();    // play the beep to indicate that we are ready to listen
+ 
+  
+  
+  multiout.add(recording);
+  multiout.add(volumemeter);
+
+
+  multiout.begin(cfg);
 
   Serial.println("Ready and listening...");
-}
-void playBeep() {
- 
-  Serial.println("Beep...");
- 
- 
-  MemoryStream memStream((uint8_t*)pcm_buffer, TOTAL_SAMPLES_BEEP);
-  StreamCopy player(kit, memStream);
-  bool playing=true;
-  while(memStream.available()){
-    player.copy();
-
-  }
-  Serial.println("Playbeep finished");
-    
 }
 
 void loop() {
@@ -141,17 +156,37 @@ void loop() {
 
 
   // 2) RECORD into recording buffer
-  recording.begin();             // clear
-  recorder.begin(recording, kit); // copy from mic → memory
 
-  unsigned long startMs = millis();
-  while (millis() - startMs < RECORD_MS) {
-    if (!recorder.copy()) {
-      // continue copying
+  //multirecorder.begin(multiout,kit);
+  recording.begin();
+  volumemeter.begin(info);
+
+  //recording.begin();             // clear
+  //recorder.begin(recording, kit); // copy from mic → memory
+
+  uint32_t  startMs = millis();
+  uint32_t  recordedMs = 0;
+  
+  int silenceCount=0;
+  while (millis() - startMs < RECORD_MS && silenceCount < 3) {
+    multirecorder.copy();
+    if(volumemeter.volume() < 200){
+      silenceCount++;
+      Serial.println("Silence detected");
+    } else {
+      silenceCount=0;
     }
+    
+    //if (!recorder.copy()) {
+      // continue copying
+    //}
   }
   recorder.end();               // stop recording
+  volumemeter.end();
   Serial.println("Recording done");
+  
+  recordedMs=millis() - startMs;
+  Serial.println(recorder.bufferSize());
   
   //sleep(1);
   //voice.say(spa_TONE1);
@@ -159,14 +194,28 @@ void loop() {
   sleep(1);  /// important pause !  
   //unsigned long recms=
   // 3) PLAYBACK the recording
+ 
+   
+  Serial.print("size:");
+  int recordingSize = recording.size();
+  Serial.println(recordingSize);
+
   recorder.begin(kit, recording); // copy from memory → kit
   Serial.println("Playing back...");
   
+  
   startMs = millis();
-  while (millis() - startMs < RECORD_MS) {
-    recorder.copy();
-    // let the data play!
-    
+  //while (millis() - startMs <= recordedMs) {
+
+  
+  /*while(true) {
+    int copied = recorder.copy();
+    Serial.println(available);
+  }*/ 
+
+  int copied=0;
+  while(copied <  recordingSize) {
+    copied += recorder.copy();
   }
   
   recorder.end();
