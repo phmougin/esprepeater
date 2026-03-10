@@ -16,4 +16,4 @@ You may also replace 3 and 4 with your own DIY audio cable (see details below)
 6. Micro USB cable to connect ESP32 board
 
 # DIY audio cable
-images/BaofengConnector.jpg
+![Baofeng-Kenwood style audio connection](images/BaofengConnector.jpg)
