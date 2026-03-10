@@ -11,6 +11,9 @@ Target audience is amateur radios seeking a cheap and simple way to make a radio
 2. Handheld radio with jack Kenwood-style connector (Baofeng, Quansheng, ...)
 3. Kenwood to 3.5mm 4-pin jack connector
 4. Jack 3.5mm stereo to mic & speaker jack splitter
-You may also replace 3 and 4 with your own DIY cable
+You may also replace 3 and 4 with your own DIY audio cable (see details below)
 5. PC running Arduino IDE (https://docs.arduino.cc/software/ide) (Windows/Mac OS/Linux is OK)
 6. Micro USB cable to connect ESP32 board
+
+# DIY audio cable
+images/BaofengConnector.jpg
