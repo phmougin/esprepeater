@@ -13,6 +13,10 @@
 //#include "Morse.h"
 
 
+// Seconds before recording
+#define wAIT_BEFORE_REC 1
+// Seconds before playing the recorded sound
+#define WAIT_BEFORE_PLAY 1
 
 const uint32_t SAMPLE_RATE = 8000;      // sampling rate 
 const uint8_t CHANNELS    = 1;           // mic is mono
@@ -33,11 +37,11 @@ StreamCopy multirecorder(multiout,kit);
  
 
 /////////////////////// beep
-const int DURATION_BEEP = 1;
+const int DURATION_BEEP = 1; // secondes
 const float TONE_FREQ = 659.0; // E5
 const int TOTAL_SAMPLES_BEEP = SAMPLE_RATE * DURATION_BEEP;
 // PCM buffer in memory
-int16_t pcm_buffer[TOTAL_SAMPLES_BEEP]; // samples are 16-bit signed integers
+int16_t beep1_buffer[TOTAL_SAMPLES_BEEP]; // samples are 16-bit signed integers
 // Stream objects
 MemoryStream memStream;
 // Output stream to AudioKit
@@ -48,6 +52,7 @@ const AudioInfo info(8000, 2, 16);
 //TalkiePCM voice(kit, CHANNELS);
 
 bool soundDetected=false;
+
 
 
 static bool soundAboveThreshold(int16_t *buf, size_t len) {
@@ -63,23 +68,20 @@ static bool soundAboveThreshold(int16_t *buf, size_t len) {
 
 
 
-void prepareBeep()
+void prepareBeep1()
 {
     for (int i = 0; i < TOTAL_SAMPLES_BEEP; i++) {
         float t = (float)i / SAMPLE_RATE;
         float s = sin(2.0 * PI * TONE_FREQ * t);
 
-        pcm_buffer[i] = (int16_t)(s * 30000);
+        beep1_buffer[i] = (int16_t)(s * 30000);
     }
 }
 
 
-void playBeep() {
- 
-  Serial.println("Beep...");
- 
-  
-  MemoryStream memStream((uint8_t*)pcm_buffer, TOTAL_SAMPLES_BEEP);
+void playBeep1() {
+  Serial.println("Beep1...");  
+  MemoryStream memStream((uint8_t*)beep1_buffer, TOTAL_SAMPLES_BEEP);
   StreamCopy player(kit, memStream);
   bool playing=true;
   
@@ -88,7 +90,7 @@ void playBeep() {
     player.copy();
 
   }
-  Serial.println("Playbeep finished");
+  Serial.println("Playbeep1 finished");
     
 }
 
@@ -110,8 +112,8 @@ void setup() {
   kit.begin(cfg);
   kit.setVolume(1.0);
 
-  prepareBeep(); // fill the PCM buffer with the beep sound
-  playBeep();    // play the beep to indicate that we are ready to listen
+  prepareBeep1(); // fill the PCM buffer with the beep sound
+  playBeep1();    // play the beep to indicate that we are ready to listen
  
   
   
@@ -125,8 +127,7 @@ void setup() {
 }
 
 void loop() {
-  //playBeep();
-  sleep(1);
+  sleep(wAIT_BEFORE_REC);
  
 
   // 1) WAIT until we see loud sound
@@ -137,20 +138,18 @@ void loop() {
 
   // read raw mic into buffer
   //size_t got = kit.read((uint8_t*)buf, CHUNK * sizeof(int16_t));
-  size_t got;
+  size_t audiobytes;
 
   soundDetected=false;
 
   Serial.println("Waiting for sound");
  
   while(!soundDetected) {
-    got=kit.readBytes((uint8_t*)buf,CHUNK);
-    //if (got >= CHUNK * sizeof(int16_t)) {
-        if (soundAboveThreshold(buf, CHUNK)) {
-          Serial.println("Sound detected → start recording");
-          soundDetected=true;
-        }
-    //}
+    audiobytes=kit.readBytes((uint8_t*)buf,CHUNK);
+    if (soundAboveThreshold(buf, CHUNK)) {
+      Serial.println("Sound detected → start recording");
+      soundDetected=true;
+    }
   }
  
 
@@ -176,10 +175,6 @@ void loop() {
     } else {
       silenceCount=0;
     }
-    
-    //if (!recorder.copy()) {
-      // continue copying
-    //}
   }
   recorder.end();               // stop recording
   volumemeter.end();
@@ -188,12 +183,7 @@ void loop() {
   recordedMs=millis() - startMs;
   Serial.println(recorder.bufferSize());
   
-  //sleep(1);
-  //voice.say(spa_TONE1);
-  //playBeep();
-  sleep(1);  /// important pause !  
-  //unsigned long recms=
-  // 3) PLAYBACK the recording
+  sleep(WAIT_BEFORE_PLAY);  /// important pause !  
  
    
   Serial.print("size:");
@@ -204,23 +194,14 @@ void loop() {
   Serial.println("Playing back...");
   
   
-  startMs = millis();
-  //while (millis() - startMs <= recordedMs) {
-
-  
-  /*while(true) {
-    int copied = recorder.copy();
-    Serial.println(available);
-  }*/ 
-
   int copied=0;
   while(copied <  recordingSize) {
     copied += recorder.copy();
   }
   
   recorder.end();
-  playBeep();
-  sleep(1);
+  playBeep1();
+  
   Serial.println("Playback completed, back to listening");
 }
 
