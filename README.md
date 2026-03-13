@@ -8,20 +8,22 @@ Target audience is amateur radios seeking a cheap and simple way to make a radio
 
 # Required hardware:
 1. ESP32 Audiokit board. List of supported boards (https://github.com/pschatzmann/arduino-audio-tools/wiki/Audio-Boards)
-2. Handheld radio with jack Kenwood-style connector (Baofeng, Quansheng, ...)
-3. Kenwood to 3.5mm 4-pin jack connector
-4. Jack 3.5mm stereo to mic & speaker jack splitter
-You may also replace 3 and 4 with your own DIY audio cable (see details below)
-5. PC running Arduino IDE (https://docs.arduino.cc/software/ide) (Windows/Mac OS/Linux is OK)
-6. Micro USB cable to connect ESP32 board
 
+![](images/Audiokit.jpg)
+
+2. Handheld radio with jack Kenwood-style connector (Baofeng, Quansheng, ...)
+
+3. Audio cable
 # Commercial audio cable
 Kenwood to 3.5mm 4-pin jack connector  
 Jack 3.5mm stereo to mic & speaker jack splitter
-
-
 ![Kenwood/Baofeng connector to speaker & mic jack connection](images/commercialCable.jpg)
 
+You may also replace 3 and 4 with your own DIY audio cable (see details below)
 
 # DIY audio cable
 ![Baofeng-Kenwood style audio connection](images/BaofengConnector.jpg)
+
+4. PC running Arduino IDE (https://docs.arduino.cc/software/ide) (Windows/Mac OS/Linux is OK)
+5. Micro USB cable to connect ESP32 board
+
