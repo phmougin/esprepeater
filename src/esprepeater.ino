@@ -1,5 +1,5 @@
 /**
- * @file repeater.ino
+ * @file esprepeater.ino
  * @brief Simplex (parrot) radio repeater
  * @author Philippe MOUGIN
  * @copyright GPLv3
