@@ -27,3 +27,11 @@ You may also replace 3 and 4 with your own DIY audio cable (see details below)
 4. PC running Arduino IDE (https://docs.arduino.cc/software/ide) (Windows/Mac OS/Linux is OK)
 5. Micro USB cable to connect ESP32 board
 
+# Building
+1. Download and install latest version of Arduino IDE https://www.arduino.cc/en/software/ (available for Windows/Mac OS/Linux)
+2. Download and install Git using defaults https://git-scm.com/install/
+3. Download project contents using Git:
+```
+cd Documents/Arduino
+git clone 
+```
