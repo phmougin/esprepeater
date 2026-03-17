@@ -18,15 +18,17 @@
 
 
 // Seconds before recording
-#define wAIT_BEFORE_REC 1
+#define WAIT_BEFORE_REC 1
 // Seconds before playing the recorded sound
 #define WAIT_BEFORE_PLAY 1
 // Beep duration in seconds
 #define DURATION_BEEP1 1   // secondes
 // Beep1 frequency in Hz (E5)
 #define BEEP1_FREQ  659.0
+// record lenght in ms (to be adjusted according to the memory available on your board)    
+#define RECORD_MS  5000   
 
-// Audio board type
+// Audiokit ESP32 board type
 // See https://github.com/pschatzmann/arduino-audio-driver/blob/main/src/AudioBoard.h for available boards and how to define your own
 #define AUDIO_BOARD_TYPE AudioKitAC101
 
@@ -35,8 +37,7 @@ const uint32_t SAMPLE_RATE = 8000;
 const uint8_t CHANNELS = 1;        
 const uint8_t BITS_PER_SAMPLE = 16;
 const uint16_t RECORD_THRESHOLD = 80;
-// record ~5 sec     
-const uint32_t RECORD_MS = 5000;   
+
 const size_t BUFFER_SIZE = (SAMPLE_RATE * CHANNELS * sizeof(int16_t) * RECORD_MS) / 1000;
 // threshold to stop recording when silence is detected
 const int SILENCE_THRESHOLD = 200; 
@@ -133,7 +134,7 @@ void setup()
 
 void loop()
 {
-  sleep(wAIT_BEFORE_REC);
+  sleep(WAIT_BEFORE_REC);
 
   // 1) WAIT until we see loud sound
 
