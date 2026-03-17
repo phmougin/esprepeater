@@ -33,5 +33,5 @@ You may also replace 3 and 4 with your own DIY audio cable (see details below)
 3. Download project contents using Git:
 ```
 cd Documents/Arduino
-git clone 
+git clone https://github.com/phmougin/esprepeater.git
 ```
