@@ -27,6 +27,8 @@
 #define BEEP1_FREQ  659.0
 // record lenght in ms (to be adjusted according to the memory available on your board)    
 #define RECORD_MS  5000   
+// input jack (see board reference)
+#define INPUT_LINE ADC_INPUT_LINE2
 
 // Audiokit ESP32 board type
 // See https://github.com/pschatzmann/arduino-audio-driver/blob/main/src/AudioBoard.h for available boards and how to define your own
@@ -118,7 +120,7 @@ void setup()
   cfg.channels = CHANNELS;
   cfg.bits_per_sample = BITS_PER_SAMPLE;
   cfg.sd_active = false;
-  cfg.input_device = ADC_INPUT_LINE1; // LINE1: mic  LINE2: input jack
+  cfg.input_device = INPUT_LINE; 
 
   kit.begin(cfg);
   kit.setVolume(1.0);
