@@ -1,5 +1,5 @@
-# esprepeater
-Simplex parrot-style repeater for handheld radios based on ESP32 (Audiokit) boards using Arduino
+# esprepeater for amateur radio
+Simplex parrot-style repeater for handheld radios based on ESP32 (Audiokit) boards using Arduino for HAM radio operators.
 
 # Features
 This projects makes use of ESP32 Audiokit boards ; which combines an ESP32 microcontoller to an audio player & recorder ; to build a simplex (also called parrot) repeater for VOX-enabled handhled radios (tested with Quansheng, Baofeng and other brands)
