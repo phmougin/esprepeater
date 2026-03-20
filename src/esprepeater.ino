@@ -28,7 +28,7 @@
 // record lenght in ms (to be adjusted according to the memory available on your board)    
 #define RECORD_MS  5000   
 // input jack (see board reference)
-#define INPUT_LINE ADC_INPUT_LINE2
+#define INPUT_LINE ADC_INPUT_LINE1
 
 // Audiokit ESP32 board type
 // See https://github.com/pschatzmann/arduino-audio-driver/blob/main/src/AudioBoard.h for available boards and how to define your own
